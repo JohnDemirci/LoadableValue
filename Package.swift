@@ -5,6 +5,15 @@ import PackageDescription
 
 let package = Package(
     name: "LoadableValue",
+    platforms: [
+        .iOS(.v15),
+        .macOS(.v15),
+        .watchOS(.v9),
+        .tvOS(.v15),
+        .visionOS(.v1),
+        .driverKit(.v19),
+        .macCatalyst(.v15)
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
