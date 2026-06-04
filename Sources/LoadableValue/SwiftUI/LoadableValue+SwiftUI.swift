@@ -32,115 +32,99 @@ public extension View {
         )
     }
 
-    @ViewBuilder
-    func onIdle<Value: Equatable, Failure: Error>(
-        of loadableValue: LoadableValue<Value, Failure>,
+    func onIdle<Value: Equatable & Sendable, Failure: Error>(
+        of laodableValue: Binding<LoadableValue<Value, Failure>>,
         work: @escaping () -> Void
     ) -> some View {
-        if case .idle = loadableValue {
-            task(id: loadableValue) {
-                work()
-            }
-        } else {
-            self
-        }
+        modifier(
+            OnIdleModifier(
+                loadableValue: laodableValue,
+                action: work
+            )
+        )
     }
 
-    @ViewBuilder
-    func onIdle<Value: Equatable, Failure: Error>(
-        of loadableValue: LoadableValue<Value, Failure>,
+    func onIdle<Value: Equatable & Sendable, Failure: Error>(
+        of loadableValue: Binding<LoadableValue<Value, Failure>>,
         work: @escaping () async -> Void
     ) -> some View {
-        if case .idle = loadableValue {
-            task(id: loadableValue) {
-                await work()
-            }
-        } else {
-            self
-        }
+        modifier(
+            OnIdleModifierAsync(
+                loadableValue: loadableValue,
+                action: work
+            )
+        )
     }
 
-    @ViewBuilder
-    func onCancellation<Value: Equatable, Failure: Error>(
-        of loadableValue: LoadableValue<Value, Failure>,
+    func onCancellation<Value: Equatable & Sendable, Failure: Error>(
+        of loadableValue: Binding<LoadableValue<Value, Failure>>,
         work: @escaping (Date) -> Void
     ) -> some View {
-        if case let .cancelled(date) = loadableValue {
-            task(id: loadableValue) {
-                work(date)
-            }
-        } else {
-            self
-        }
+        modifier(
+            OnCancelModifier(
+                loadableValue: loadableValue,
+                onCancel: work
+            )
+        )
     }
 
-    @ViewBuilder
-    func onCancellation<Value: Equatable, Failure: Error>(
-        of loadableValue: LoadableValue<Value, Failure>,
+    func onCancellation<Value: Equatable & Sendable, Failure: Error>(
+        of loadableValue: Binding<LoadableValue<Value, Failure>>,
         work: @escaping (Date) async -> Void
     ) -> some View {
-        if case let .cancelled(date) = loadableValue {
-            task(id: loadableValue) {
-                await work(date)
-            }
-        } else {
-            self
-        }
+        modifier(
+            OnCancelModifierAsync(
+                loadableValue: loadableValue,
+                onCancel: work
+            )
+        )
     }
 
-    @ViewBuilder
     func onLoading<Value: Equatable, Failure: Error>(
-        of loadableValue: LoadableValue<Value, Failure>,
+        of loadableValue: Binding<LoadableValue<Value, Failure>>,
         work: @escaping () -> Void
     ) -> some View {
-        if case .loading = loadableValue {
-            task(id: loadableValue) {
-                work()
-            }
-        } else {
-            self
-        }
+        modifier(
+            OnLoadingModifier(
+                loadableValue: loadableValue,
+                action: work
+            )
+        )
     }
 
-    @ViewBuilder
     func onLoading<Value: Equatable, Failure: Error>(
-        of loadableValue: LoadableValue<Value, Failure>,
+        of loadableValue: Binding<LoadableValue<Value, Failure>>,
         work: @escaping () async -> Void
     ) -> some View {
-        if case .loading = loadableValue {
-            task(id: loadableValue) {
-                await work()
-            }
-        } else {
-            self
-        }
+        modifier(
+            OnLoadingModifierAsync(
+                loadableValue: loadableValue,
+                action: work
+            )
+        )
     }
 
-    @ViewBuilder
-    func onLoadingComplete<Value: Equatable, Failure: Error>(
-        of loadableValue: LoadableValue<Value, Failure>,
+    func onLoadingComplete<Value: Equatable & Sendable, Failure: Error>(
+        of loadableValue: Binding<LoadableValue<Value, Failure>>,
         work: @escaping (LoadingSuccess<Value>) -> Void
     ) -> some View {
-        if case let .loaded(loadingSuccess) = loadableValue {
-            task(id: loadableValue) {
-                work(loadingSuccess)
-            }
-        } else {
-            self
-        }
+        modifier(
+            OnLoadingCompleteModifier(
+                loadableValue: loadableValue,
+                action: work
+            )
+        )
     }
 
-    @ViewBuilder
-    func onLoadingComplete<Value: Equatable, Failure: Error>(
-        of loadableValue: LoadableValue<Value, Failure>,
+    func onLoadingComplete<Value: Equatable & Sendable, Failure: Error>(
+        of loadableValue: Binding<LoadableValue<Value, Failure>>,
         work: @escaping (LoadingSuccess<Value>) async -> Void
     ) -> some View {
-        if case let .loaded(loadingSuccess) = loadableValue {
-            task(id: loadableValue) {
-                await work(loadingSuccess)
-            }
-        } else {
-            self
-        }
+        modifier(
+            OnLoadingCompleteModifierAsync(
+                loadableValue: loadableValue,
+                action: work
+            )
+        )
     }
 }
