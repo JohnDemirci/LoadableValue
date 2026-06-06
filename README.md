@@ -8,6 +8,7 @@
 - Timestamped wrappers for success and failure via `LoadingSuccess` and `LoadingFailure`
 - Functional helpers like `map` and in-place mutation for loaded values
 - Variadic `zip` for combining multiple `LoadableValue`s into one tuple
+- SwiftUI `@Loadable` dynamic property with state bindings and explicit loading operations
 - SwiftUI view modifiers for reacting to state changes
 
 ## Requirements
@@ -143,6 +144,36 @@ When states differ, `zip` resolves them with this priority:
 That means a single failure wins immediately, `idle` blocks progress ahead of cancellation and loading, and `loading` is only returned when no higher-priority state is present.
 
 ## SwiftUI Helpers
+
+Use `@Loadable` when a view owns a `LoadableValue`:
+
+```swift
+import SwiftUI
+import LoadableValue
+
+struct ProfileView: View {
+    @Loadable private var profile: LoadableValue<String, Error>
+
+    var body: some View {
+        LoadableValueView(profile) { value in
+            Text(value)
+        } failed: { error in
+            Text(error.localizedDescription)
+        }
+        .task {
+            $profile.load {
+                try await fetchProfileName()
+            }
+        }
+    }
+
+    private func fetchProfileName() async throws -> String {
+        "Taylor"
+    }
+}
+```
+
+The projection exposes `$profile.binding` for the full state, `$profile.value` for editing the loaded payload while preserving its timestamp, and `$profile.cancel()` / `$profile.reset()` for task control. The throwing `load` convenience is available when the failure type is `Error`; typed-failure callers can assign `.loading`, `.loaded`, and `.failed` directly.
 
 The package includes view modifiers that react to `Binding<LoadableValue<...>>` changes:
 

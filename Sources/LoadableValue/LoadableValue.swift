@@ -64,6 +64,26 @@ extension LoadableValue: Encodable where Value: Encodable, Failure: Encodable {}
 extension LoadableValue: Decodable where Value: Decodable, Failure: Decodable {}
 
 public extension LoadableValue {
+    /// Creates a loaded state with the supplied value and timestamp.
+    ///
+    /// - Parameters:
+    ///   - value: The successfully loaded value.
+    ///   - timestamp: The timestamp for the loading success. Defaults to the current date.
+    /// - Returns: A loaded value containing a `LoadingSuccess`.
+    static func loaded(_ value: Value, timestamp: Date = Date()) -> Self {
+        .loaded(LoadingSuccess(value: value, timestamp: timestamp))
+    }
+
+    /// Creates a failed state with the supplied failure and timestamp.
+    ///
+    /// - Parameters:
+    ///   - failure: The failure that occurred during loading.
+    ///   - timestamp: The timestamp for the loading failure. Defaults to the current date.
+    /// - Returns: A failed value containing a `LoadingFailure`.
+    static func failed(_ failure: Failure, timestamp: Date = Date()) -> Self {
+        .failed(LoadingFailure(failure: failure, timestamp: timestamp))
+    }
+
     /// Returns the loaded value if the state is `.loaded`, otherwise returns `nil`.
     ///
     /// This computed property provides a convenient way to extract the successful value
