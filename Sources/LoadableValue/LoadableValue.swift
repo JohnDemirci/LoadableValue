@@ -34,7 +34,7 @@ import OSLog
 /// // Handle failure
 /// userProfile = .failed(LoadingFailure(failure: error, timestamp: Date()))
 /// ```
-public enum LoadableValue<Value: Sendable, Failure: Error>: Sendable {
+public enum LoadableValue<Value: Sendable, Failure: Error> {
     case cancelled(Date)
     case failed(LoadingFailure<Failure>)
     case loaded(LoadingSuccess<Value>)
@@ -58,10 +58,10 @@ extension LoadableValue: Equatable where Value: Equatable {
         }
     }
 }
-
 extension LoadableValue: Hashable where Value: Hashable, Failure: Hashable {}
 extension LoadableValue: Encodable where Value: Encodable, Failure: Encodable {}
 extension LoadableValue: Decodable where Value: Decodable, Failure: Decodable {}
+extension LoadableValue: Sendable where Value: Sendable {}
 
 public extension LoadableValue {
     /// Creates a loaded state with the supplied value and timestamp.
